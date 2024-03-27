@@ -1,50 +1,50 @@
 Resources:
-  MyVPC:
+  CICDVPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16      
 
-  MyInternetGateway:
+  IGW:
     Type: AWS::EC2::InternetGateway
 
-  MyGatewayAttachment:
+  IGW-Attachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: !Ref MyVPC
-      InternetGatewayId: !Ref MyInternetGateway
+      VpcId: !Ref CICDVPC
+      InternetGatewayId: !Ref IGW
 
-  MySubnet:
+  Pub-Subnet:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref MyVPC
+      VpcId: !Ref CICDVPC
       CidrBlock: 10.0.0.0/24
       AvailabilityZone: "ap-south-1b"
       MapPublicIpOnLaunch: true  
 
-  MyRouteTable:
+  Pub-RouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref MyVPC
+      VpcId: !Ref CICDVPC
 
-  MyRoute:
+  Pub-Route:
     Type: AWS::EC2::Route
-    DependsOn: MyGatewayAttachment
+    DependsOn: IGW-Attachment
     Properties:
-      RouteTableId: !Ref MyRouteTable
+      RouteTableId: !Ref Pub-RouteTable
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref MyInternetGateway
+      GatewayId: !Ref IGW
 
-  MySubnetAssociation:
+  SubnetAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref MySubnet
-      RouteTableId: !Ref MyRouteTable
+      SubnetId: !Ref Pub-Subnet
+      RouteTableId: !Ref Pub-RouteTable
 
-  MySecurityGroup:
+  Inst-SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow HTTP & SSH access
-      VpcId: !Ref MyVPC
+      VpcId: !Ref CICDVPC
       SecurityGroupIngress:
         - CidrIp: 0.0.0.0/0
           IpProtocol: tcp
@@ -59,15 +59,15 @@ Resources:
           FromPort: 22
           ToPort: 22
       
-  MyInstance:
+  WebServer:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: ami-049a62eb90480f276 
       InstanceType: t2.micro
-      KeyName: "awskey"
+      KeyName: "ci-cd"
       SecurityGroupIds:
-        - !Ref MySecurityGroup
-      SubnetId: !Ref MySubnet
+        - !Ref Inst-SecurityGroup
+      SubnetId: !Ref Pub-Subnet
       Tags:
         - Key: Name
           Value: PipelineServer
@@ -81,5 +81,5 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: "mounika-mediumbucket11"
+      BucketName: "DDCloud-Ranjith"
 
