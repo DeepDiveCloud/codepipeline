@@ -7,7 +7,7 @@ Resources:
   IGW:
     Type: AWS::EC2::InternetGateway
 
-  IGW-Attachment:
+  IGWAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       VpcId: !Ref CICDVPC
@@ -28,7 +28,7 @@ Resources:
 
   Pub-Route:
     Type: AWS::EC2::Route
-    DependsOn: IGW-Attachment
+    DependsOn: IGWAttachment
     Properties:
       RouteTableId: !Ref Pub-RouteTable
       DestinationCidrBlock: 0.0.0.0/0
