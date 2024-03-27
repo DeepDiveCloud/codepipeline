@@ -13,7 +13,7 @@ Resources:
       VpcId: !Ref CICDVPC
       InternetGatewayId: !Ref IGW
 
-  Pub-Subnet:
+  PubSubnet:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref CICDVPC
@@ -21,26 +21,26 @@ Resources:
       AvailabilityZone: "ap-south-1b"
       MapPublicIpOnLaunch: true  
 
-  Pub-RouteTable:
+  PubRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref CICDVPC
 
-  Pub-Route:
+  PubRoute:
     Type: AWS::EC2::Route
     DependsOn: IGWAttachment
     Properties:
-      RouteTableId: !Ref Pub-RouteTable
+      RouteTableId: !Ref PubRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref IGW
 
   SubnetAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref Pub-Subnet
-      RouteTableId: !Ref Pub-RouteTable
+      SubnetId: !Ref PubSubnet
+      RouteTableId: !Ref PubRouteTable
 
-  Inst-SecurityGroup:
+  InstSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow HTTP & SSH access
@@ -66,8 +66,8 @@ Resources:
       InstanceType: t2.micro
       KeyName: "ci-cd"
       SecurityGroupIds:
-        - !Ref Inst-SecurityGroup
-      SubnetId: !Ref Pub-Subnet
+        - !Ref InstSecurityGroup
+      SubnetId: !Ref PubSubnet
       Tags:
         - Key: Name
           Value: PipelineServer
