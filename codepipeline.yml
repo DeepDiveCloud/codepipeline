@@ -81,5 +81,5 @@ Resources:
   MyS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: "DDCloud-Ranjith"
+      BucketName: "ddcloud-ranjith"
 
